@@ -1,7 +1,7 @@
 def extract_coordis(cursor):
   query = """  
     SELECT 
-    DISTINCT p.prestacion_coordi, 
+      DISTINCT p.prestacion_coordi, 
       CONCAT(p.coordi_apellido, ', ', p.coordi_nombre) AS coordinadora,
       c.coordi_mail
     FROM 
@@ -10,8 +10,8 @@ def extract_coordis(cursor):
       ON p.prestacion_coordi = c.coordi_id
     WHERE 
       p.prestacion_estado = 1
-          AND p.prestacion_coordi IS NOT NULL
-          AND p.prestacion_estado_descrip != "TERAPIAS"
+      AND p.prestacion_coordi IS NOT NULL
+      AND p.prestacion_estado_descrip != "TERAPIAS"
   """
   cursor.execute(query) 
   return cursor.fetchall()
@@ -23,6 +23,11 @@ def extract_pas(cursor, coordi_id):
       pa.pa_id,
       CONCAT(pa.pa_apellido, ', ', pa.pa_nombre) AS pa_nombre,
       l.localidad_nombre,
+      CASE 
+          WHEN pa.pa_estado = 2 THEN 'OK-SIN CASOS'
+          WHEN pa.pa_estado = 3 THEN 'EN ADMISIÓN'
+      END AS estado_desc,
+      pa.padispo_nombre,
       pa.pa_tel1,
       pa.pa_tel2,
       pa.pa_mail

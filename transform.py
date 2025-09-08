@@ -9,7 +9,6 @@ load_dotenv()
 
 MAIL_AUTOR = os.getenv("MAIL_AUTOR")
 APP_GMAIL_PASS = os.getenv("APP_GMAIL_PASS")
-MAIL_DESTINO = os.getenv("MAIL_DESTINO")
 
 def enviar_mail(destinatario, subject, body, archivo_adjunto):
   try:
@@ -30,7 +29,8 @@ def generar_excel_por_coordinadora(coord_nombre, pas, coord_mail):
     ws = wb.active
     ws.title = "PAs disponibles"
 
-    headers = ["PA ID", "NOMBRE", "LOCALIDAD", "TELEFONO", "TELEFONO 2","EMAIL"]
+    headers = ["PA ID", "NOMBRE", "LOCALIDAD", "ESTADO", "DISPONIBILIDAD", "TELEFONO", 
+               "TELEFONO 2","EMAIL"]
     ws.append(headers)
     for cell in ws[1]:
         cell.font = Font(bold=True)
@@ -42,13 +42,13 @@ def generar_excel_por_coordinadora(coord_nombre, pas, coord_mail):
     wb.save(filename)
     print(f"✅ Excel generado: {filename}")
 
-    # enviar_mail(
-    #     destinatario=coord_mail,
-    #     subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
-    #     body=f"""Hola {coord_nombre},\n\nAdjunto encontrarás el listado actualizado de PAs 
-    #       disponibles en tus localidades.\n\nSaludos,\nMariano López.""",
-    #     archivo_adjunto=filename
-    # )
+    enviar_mail(
+      destinatario=coord_mail,
+      subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
+      body=f"""Hola {coord_nombre},\n\nAdjunto encontrarás el listado actualizado de PAs 
+        disponibles en tus localidades.\n\nSaludos,\nMariano López.""",
+      archivo_adjunto=filename
+    )
 
 def generar_reportes_por_coordinadora(conn):
     cursor = conn.cursor()
