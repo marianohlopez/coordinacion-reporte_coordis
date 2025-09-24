@@ -29,8 +29,8 @@ def generar_excel_por_coordinadora(coord_nombre, pas, coord_mail):
     ws = wb.active
     ws.title = "PAs disponibles"
 
-    headers = ["PA ID", "NOMBRE", "LOCALIDAD", "ESTADO", "DISPONIBILIDAD", "TELEFONO", 
-               "TELEFONO 2","EMAIL"]
+    headers = ["PA ID", "NOMBRE", "ETIQUETA", "ESTADO", "OBSERVACIONES", "DISPONIBILIDAD",
+               "REF. DE BUSQUEDA", "LOCALIDAD", "TELEFONO", "TELEFONO 2","EMAIL"]
     ws.append(headers)
     for cell in ws[1]:
         cell.font = Font(bold=True)
@@ -45,8 +45,8 @@ def generar_excel_por_coordinadora(coord_nombre, pas, coord_mail):
     enviar_mail(
       destinatario=coord_mail,
       subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
-      body=f"""Hola {coord_nombre},\n\nAdjunto encontrarás el listado actualizado de PAs 
-        disponibles en tus localidades.\n\nSaludos,\nMariano López.""",
+      body=f"""Hola {coord_nombre},\n\nSe adjunta el listado actualizado de PAs 
+        disponibles en tus localidades.\n\nSaludos,\nMariano López - Ailes Inclusión.""",
       archivo_adjunto=filename
     )
 
