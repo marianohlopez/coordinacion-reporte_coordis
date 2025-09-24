@@ -11,7 +11,6 @@ def extract_coordis(cursor):
     WHERE 
       p.prestacion_estado = 1
       AND p.prestacion_coordi IS NOT NULL
-      AND p.prestacion_estado_descrip != "TERAPIAS"
       AND p.prestacion_coordi != 14
   """
   cursor.execute(query) 
