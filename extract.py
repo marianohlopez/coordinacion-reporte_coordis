@@ -24,8 +24,8 @@ def extract_pas(cursor, coordi_id):
       CONCAT(pa.pa_apellido, ', ', pa.pa_nombre) AS pa_nombre,
       e.paetiqcat_nombre,
       CASE 
-          WHEN pa.pa_estado = 2 THEN 'OK-SIN CASOS'
-          WHEN pa.pa_estado = 3 THEN 'EN ADMISIÓN'
+        WHEN pa.pa_estado = 2 THEN 'OK-SIN CASOS'
+        WHEN pa.pa_estado = 3 THEN 'EN ADMISIÓN'
       END AS estado_desc,
       pa.pa_obs_saie,
       pa.padispo_nombre,
@@ -44,10 +44,10 @@ def extract_pas(cursor, coordi_id):
       ON pa.pa_localidad = l.localidad_id
     WHERE pa.pa_estado IN (2,3) 
       AND pa.pa_localidad IN (
-            SELECT DISTINCT e.escuela_localidad
-            FROM v_prestaciones p
-            JOIN v_escuelas e ON p.prestacion_escuela = e.escuela_id
-            WHERE p.prestacion_coordi = {coordi_id}
+        SELECT DISTINCT e.escuela_localidad
+        FROM v_prestaciones p
+        JOIN v_escuelas e ON p.prestacion_escuela = e.escuela_id
+        WHERE p.prestacion_coordi = {coordi_id}
       )
     ORDER BY l.localidad_nombre, pa_nombre;
   """

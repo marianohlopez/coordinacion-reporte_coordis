@@ -19,7 +19,7 @@ jobs:
 
       - name: Instalar dependencias
         run: |
-          pip install mysql-connector-python openpyxl yagmail python-dotenv
+          pip install mysql-connector-python openpyxl yagmail python-dotenv pymongo
 
       - name: Ejecutar script
         env:

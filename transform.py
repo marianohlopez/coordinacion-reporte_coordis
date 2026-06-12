@@ -25,41 +25,47 @@ def enviar_mail(destinatario, subject, body, archivo_adjunto):
 
 
 def generar_excel_por_coordinadora(coord_nombre, pas, coord_mail):
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "PAs disponibles"
+  wb = Workbook()
+  ws = wb.active
+  ws.title = "PAs disponibles"
 
-    headers = ["PA ID", "NOMBRE", "ETIQUETA", "ESTADO", "OBSERVACIONES", "DISPONIBILIDAD",
-               "REF. DE BUSQUEDA", "LOCALIDAD", "TELEFONO", "TELEFONO 2","EMAIL"]
-    ws.append(headers)
-    for cell in ws[1]:
-        cell.font = Font(bold=True)
+  headers = ["PA ID", "NOMBRE", "ETIQUETA", "ESTADO", "OBSERVACIONES", "DISPONIBILIDAD",
+              "REF. DE BUSQUEDA", "LOCALIDAD", "TELEFONO", "TELEFONO 2","EMAIL"]
+  ws.append(headers)
+  for cell in ws[1]:
+      cell.font = Font(bold=True)
 
-    for pa in pas:
-        ws.append(pa)
+  for pa in pas:
+      ws.append(pa)
 
-    filename = f"reporte_{coord_nombre.replace(', ', '_')}.xlsx"
-    wb.save(filename)
-    print(f"✅ Excel generado: {filename}")
+  filename = f"reporte_{coord_nombre.replace(', ', '_')}.xlsx"
+  wb.save(filename)
+  print(f"✅ Excel generado: {filename}")
 
-    enviar_mail(
-      destinatario=coord_mail,
-      subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
-      body=f"""Hola {coord_nombre},\n\nSe adjunta el listado actualizado de PAs 
-        disponibles en tus localidades.\n\nSaludos,\nMariano López - Ailes Inclusión.""",
-      archivo_adjunto=filename
-    )
+  # enviar_mail(
+  #   destinatario=coord_mail,
+  #   subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
+  #   body=f"""Hola {coord_nombre},\n\nSe adjunta el listado actualizado de PAs 
+  #     disponibles en tus localidades.\n\nSaludos,\nMariano López - Ailes Inclusión.""",
+  #   archivo_adjunto=filename
+  # )
 
 def generar_reportes_por_coordinadora(conn):
-    cursor = conn.cursor()
+  cursor = conn.cursor()
 
-    coordinadoras = extract_coordis(cursor)
+  cant = 0
+  registros = 0
 
-    for coord in coordinadoras:
-      coord_id = coord[0]
-      coord_nombre = coord[1]
-      coord_mail = coord[2]
+  coordinadoras = extract_coordis(cursor)
 
-      pas = extract_pas(cursor, coord_id)
-      generar_excel_por_coordinadora(coord_nombre, pas, coord_mail)
+  for coord in coordinadoras:
+    coord_id = coord[0]
+    coord_nombre = coord[1]
+    coord_mail = coord[2]
 
+    pas = extract_pas(cursor, coord_id)
+    generar_excel_por_coordinadora(coord_nombre, pas, coord_mail)
+    cant += 1
+    registros += len(pas)
+
+  return cant, registros
