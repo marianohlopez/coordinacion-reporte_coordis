@@ -42,7 +42,7 @@ def register_report(cant_enviados, cant_registros):
     doc = {
       "timestamp": datetime.now() - timedelta(hours=3),
       "area": "Coordinacion",
-      "tipo_reporte": "pas-busqueda",
+      "tipo_reporte": "pas-disp-busqueda",
       "cant_enviados": cant_enviados,
       "cant_registros": cant_registros
     }
