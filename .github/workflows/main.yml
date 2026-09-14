@@ -2,7 +2,7 @@ name: Ejecutar coordinacion-reporte coordis
 
 on:
   schedule:
-    - cron: "0 9 1,15 * *"
+    - cron: "33 8 * * 2"
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Instalar dependencias
         run: |
