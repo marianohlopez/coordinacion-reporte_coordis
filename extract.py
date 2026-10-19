@@ -166,3 +166,27 @@ def extract_seguim_mes(cursor, coord_user_id):
     """
   cursor.execute(query, (coord_user_id, ))
   return cursor.fetchall()
+
+def extract_inasist(cursor, coord_user_id):
+  query = """ 
+    SELECT
+      p.prestacion_id,
+      CONCAT(p.alumno_apellido, ', ', p.alumno_nombre) AS nombre_alumno,
+      CONCAT(pa.pa_apellido, ', ', pa.pa_nombre) AS nombre_pa,
+      DATE_FORMAT(MAX(ap.asignpa_fec1), '%d/%m/%Y') AS fec_asig,
+      COUNT(DISTINCT CASE WHEN (v.presentismo_presente_pa = 0 & v.presentismo_presente_alumno = 1) THEN v.presentismo_id END) AS inasistencias
+    FROM v_prestaciones p
+      LEFT JOIN v_presentismo_pas v
+      ON p.prestacion_id = v.presentismo_prestacion
+    JOIN v_pas pa
+      ON p.prestacion_pa = pa.pa_id
+    JOIN v_asignaciones_pa ap
+      ON p.prestacion_id = ap.asignpa_prest
+    WHERE p.prestacion_estado = 1
+      AND p.prestipo_nombre_corto != 'TERAPIAS'
+      AND p.prestacion_coordi = %s
+    GROUP BY prestacion_id
+    ORDER BY nombre_alumno
+    """
+  cursor.execute(query, (coord_user_id, ))
+  return cursor.fetchall()

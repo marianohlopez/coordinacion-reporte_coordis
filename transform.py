@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import yagmail
 from extract import (extract_coordis, extract_pas, extract_informes, extract_seguim,
-                     extract_seguim_mes)
+                     extract_seguim_mes, extract_inasist)
 
 load_dotenv()
 
@@ -26,7 +26,7 @@ def enviar_mail(destinatario, subject, body, archivo_adjunto):
 
 
 def generar_excel_por_coordinadora(coord_nombre, pas, informes, seguimientos, seguimientos_mes,
-                                   coord_mail):
+                                   inasistencias, coord_mail):
   wb = Workbook()
   ws = wb.active
   ws.title = "PAs disponibles"
@@ -85,6 +85,20 @@ def generar_excel_por_coordinadora(coord_nombre, pas, informes, seguimientos, se
   for row in seguimientos_mes:
     ws4.append(row)
 
+  # Quinta hoja (inasistencias pas)
+  ws5 = wb.create_sheet(title="Inasistencias")
+
+  headers_inasistencias = ["PRESTACION ID", "ALUMNO", "PA_NOMBRE", "FECHA_ASIGNACION", 
+                              "INASISTENCIAS"]
+  
+  ws5.append(headers_inasistencias)
+
+  for cell in ws5[1]:
+    cell.font = Font(bold=True)
+
+  for row in inasistencias:
+    ws5.append(row)
+
   filename = f"reporte_{coord_nombre.replace(', ', '_')}.xlsx"
   wb.save(filename)
   print(f"✅ Excel generado: {filename}")
@@ -93,8 +107,8 @@ def generar_excel_por_coordinadora(coord_nombre, pas, informes, seguimientos, se
     destinatario=coord_mail,
     subject=f"Reporte de PAs disponibles - {coord_nombre} (NO CONTESTAR)",
     body=f"""Hola {coord_nombre},\n\nSe adjunta el listado actualizado de PAs disponibles 
-    en sus localidades junto con el detalle de los informes y seguimientos
-    cargados en Indyco.\n\nSaludos,\nMariano López - Ailes Inclusión.""",
+    en sus localidades junto con el detalle de los informes, seguimientos e inasistencias
+    cargadas en Indyco.\n\nSaludos,\nMariano López - Ailes Inclusión.""",
     archivo_adjunto=filename
   )
 
@@ -116,8 +130,9 @@ def generar_reportes_por_coordinadora(conn):
     informes = extract_informes(cursor, coord_id)
     seguimientos = extract_seguim(cursor, coord_id)
     seguimientos_mes = extract_seguim_mes(cursor, coord_user_id)
+    inasistencias = extract_inasist(cursor, coord_id)
     generar_excel_por_coordinadora(coord_nombre, pas, informes, seguimientos, seguimientos_mes,
-                                   coord_mail)
+                                   inasistencias, coord_mail)
     cant += 1
     registros += len(pas)
 
